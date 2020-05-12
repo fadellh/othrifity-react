@@ -36,3 +36,8 @@
     transform: rotate(360deg);
   }
 }
+
+.thumbnail:hover {
+  background-color: gray;
+  opacity: 0.5;
+  }

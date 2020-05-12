@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import { Route } from 'react-router-dom';
+import NavbarAdmin from './Component/NavbarAdmin'
+import HomeDasboard from './Pages/HomeDashboard'
+import Sidebar from "./Component/Sidebar";
+import ManageUser from './Pages/ManageUser'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <NavbarAdmin/>
+      <div className='row '>
+        <div className='col-2 w-100 bg-dark'>
+        <Sidebar/>
+        </div>
+        <div className='col-10 bg-light pt-3' >
+          <Route path='/' component={HomeDasboard} exact/>
+          <Route path='/manage-user' component={ManageUser} />
+        </div>
+        </div>
+      </div>
+    )
+  }
 }
 
-export default App;
+export default App
