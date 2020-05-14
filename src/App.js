@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import NavbarAdmin from './Component/NavbarAdmin'
 import HomeDasboard from './Pages/HomeDashboard'
 import Sidebar from "./Component/Sidebar";
@@ -8,6 +8,7 @@ import ManageUser from './Pages/ManageUser'
 class App extends Component {
   render() {
     return (
+      <Switch>
       <div>
         <NavbarAdmin/>
       <div className='row '>
@@ -20,6 +21,7 @@ class App extends Component {
         </div>
         </div>
       </div>
+      </Switch>
     )
   }
 }

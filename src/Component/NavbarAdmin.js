@@ -46,7 +46,7 @@ function NavbarAdmin() {
         
             <NavItem className="form-inline my-2 my-lg-0">
               <Input className="form-control mr-sm-2" type="search"  placeholder="Search" aria-label="Search"/>
-              <Button color="success" type="submit">Search</Button>
+            <Button color="success" type="submit" >Search</Button>
         
             </NavItem>
             <NavItem>

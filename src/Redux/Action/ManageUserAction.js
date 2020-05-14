@@ -7,13 +7,24 @@ import {
 import Axios from 'axios'
 import {API_URL} from '../../Support/API_URL'
 
-export const fetchListUser = () => {
+export const fetchListUser = (orderBy, filterBy, search) => {
     return async (dispatch) => {
         dispatch({
             type: API_MANAGE_USER_START
         })
         try{
-           let res = await Axios.get(`${API_URL}/manage-user/getAllUsers`) 
+            let url = `${API_URL}/manage-user/getAllUsers?`
+            if(orderBy){
+                url += `${orderBy}`
+            }
+            if(filterBy){
+                url += `${filterBy}`
+            }
+            if(search){
+                url += `${search}`
+            }
+            console.log(url)
+           let res = await Axios.get(`${url}`) 
            console.log(res.data)
             dispatch({
                 type: API_FETCH_SUCCESS,

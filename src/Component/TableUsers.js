@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react'
-import { Table, DropdownToggle, DropdownMenu, DropdownItem,ButtonDropdown, Button, Badge, Alert} from 'reactstrap'
+import { Table, DropdownToggle, DropdownMenu, DropdownItem,ButtonDropdown, Button, Badge, Alert, Input} from 'reactstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchListUser, updateUser,deleteUser } from '../Redux/Action/ManageUserAction'
 import Swal from 'sweetalert2'
 
 
 function TableUsers() {
-
+    
     let dispatch = useDispatch()
-
+    const [orderBy, setOrderBy] = useState('orderBy=u.id&sort=asc')
+    const [filterBy, setFilterBy] = useState('')
+    const [search, setSearch] = useState('')
+    
     useEffect(() => {
         dispatch(
-            fetchListUser()
+            fetchListUser(orderBy, filterBy, search)
         )
-      
-    },[dispatch])
+        // getPlayer()
+        
+    },[dispatch, orderBy, filterBy, search])
     
     let dataList = useSelector((state) => state.listUser.dataList)
     console.log(dataList)
-
-    
+   
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggle = () => setDropdownOpen(prevState => !prevState);
@@ -117,35 +120,59 @@ function TableUsers() {
                     </td>
                 </tr>
             )
-        }
-        
+                }return(
+                    <tr key={index}>
+                            <td>{index}</td>
+                            <td>{handleStatus(val.status)}</td>
+                            <td>{val.username}</td>
+                            <td>{val.email}</td>
+                            <td>{val.address}</td>
+                            <td>{val.revenue_toko}</td>
+                            <td>{val.total_sale}</td>
+                            <td>{val.join_date}</td>
+                            <td>
+                                <ButtonDropdown onClick={()=> setSelect(val.id)}>
+                                    <DropdownToggle caret color="success"> User Action </DropdownToggle>
+                                    <DropdownMenu>
+                                        {/* {renderDropdown(val.id)} */}
+                                    </DropdownMenu>
+                                </ButtonDropdown>
+                            </td>
+                    </tr>
+                )
+                })
+            }
 
-        return(
-            <tr key={index}>
-                    <td>{index}</td>
-                    <td>{handleStatus(val.status)}</td>
-                    <td>{val.username}</td>
-                    <td>{val.email}</td>
-                    <td>{val.address}</td>
-                    <td>{val.revenue_toko}</td>
-                    <td>{val.total_sale}</td>
-                    <td>{val.join_date}</td>
-                    <td>
-                        <ButtonDropdown onClick={()=> setSelect(val.id)}>
-                            <DropdownToggle caret color="success"> User Action </DropdownToggle>
-                            <DropdownMenu>
-                                {/* {renderDropdown(val.id)} */}
-                            </DropdownMenu>
-                        </ButtonDropdown>
-                    </td>
-            </tr>
-        )
-        })
-    }
 
     return (
         <div>
-            <Table>
+            <div className='row d-flex justify-content-end'>
+                <Input 
+                type='text' placeholder='Search by username' className='col-2 mb-3 ml-0'
+                 onChange={(e)=>setSearch(`&search=${e.target.value}`)}>
+                </Input>
+                <div className='col-3 mb-3'></div>
+                <div className='col-1 mb-3 mt-2'>
+                    <strong>FilterBy:</strong>
+                </div> 
+                <Input type='select' className='justify-content-start col-2 mb-3' onChange={(e)=> setFilterBy(e.target.value)}>
+                    <option value=''>All User</option>
+                    <option value='&filterBy1=u.statusId&filterParam1=1'>Active User</option>
+                    <option value='&filterBy1=u.statusId&filterParam1=2'>Banned User</option>
+                </Input>
+                <div className='col-1 mb-3 mt-2'>
+                    <strong>Sorting:</strong>
+                </div>           
+                <Input type='select' className='col-2 mb-3 mr-2' onChange={(e)=>setOrderBy(e.target.value)}>
+                    <option value='orderBy=u.id&sort=asc'>Paling sesuai</option>
+                    <option value='orderBy=count(t.userId)&sort=desc'>Sale Tertinggi</option>
+                    <option value='orderBy=count(t.userId)&sort=asc'>Sale Terendah</option>
+                    <option value='orderBy=sum(t.total_price)&sort=desc'>Revenue Tertinggi</option>
+                    <option value='orderBy=sum(t.total_price)&sort=asc'>Revenue Terendah</option>
+                </Input>
+            </div>
+
+            <Table  >
                 <thead>
                     <tr>
                         <th>#</th>    
