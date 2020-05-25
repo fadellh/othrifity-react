@@ -4,6 +4,8 @@ import NavbarAdmin from './Component/NavbarAdmin'
 import HomeDasboard from './Pages/HomeDashboard'
 import Sidebar from "./Component/Sidebar";
 import ManageUser from './Pages/ManageUser'
+import Transaction from './Pages/Transaction'
+import RajaOngkir from './Pages/RajaOngkir'
 
 class App extends Component {
   render() {
@@ -18,6 +20,8 @@ class App extends Component {
         <div className='col-10 bg-light pt-3' >
           <Route path='/' component={HomeDasboard} exact/>
           <Route path='/manage-user' component={ManageUser} />
+          <Route path='/transaction' component={Transaction} />
+          <Route path='/raja' component={RajaOngkir} />
         </div>
         </div>
       </div>

@@ -6,21 +6,6 @@ import TableUsers from '../Component/TableUsers'
 
 function ManageUser() {
 
-    // let dispatch = useDispatch()
-
-    // useEffect(() => {
-    //     dispatch(
-    //         fetchListUser()
-    //     )
-    //     // if(update){
-    //     //     setUpdate(false)
-    //     // }
-    // },[dispatch])
-
-    // let dataList = useSelector((state) => state.listUser.dataList)
-
-
-
     return (
         <div>
           <TableUsers/>

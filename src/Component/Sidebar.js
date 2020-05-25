@@ -33,10 +33,11 @@ function Sidebar() {
                   <NavLink href="#" className='text-white thumbnail'>Report</NavLink>
                   <ListGroup>
                     <ListGroupItem  className='bg-dark border-0 '>
-                        <NavLink href='/'  className='bg-dark text-white border-0 thumbnail'>Sales Report</NavLink>
+                        <NavLink href='/transaction'  className='bg-dark text-white border-0 thumbnail'>Transaction</NavLink>
                         <NavLink href='/'  className='bg-dark text-white border-0 thumbnail'>Revenue Toko</NavLink>
                         <NavLink href='/'  className='bg-dark text-white border-0 thumbnail'>Traffic</NavLink>
                         <NavLink href='/'  className='bg-dark text-white border-0 thumbnail'>Revenue Admin</NavLink><hr className='bg-secondary'></hr>
+                        <NavLink href='/raja'  className='bg-dark text-white border-0 thumbnail'>Raja Ongkir Data</NavLink><hr className='bg-secondary'></hr>
                     </ListGroupItem>
                   </ListGroup>
             </NavItem>
