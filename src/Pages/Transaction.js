@@ -8,7 +8,7 @@ import {Input,
     DropdownItem, 
     ButtonDropdown, 
     DropdownToggle, 
-    InputGroupAddon, InputGroup, InputGroupText, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardBody, CardText, CardTitle } from 'reactstrap'
+    InputGroupAddon, InputGroup, InputGroupText, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardBody, CardText, CardTitle, CustomInput } from 'reactstrap'
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTransaction,fetchUserAddress } from '../Redux/Action';
 import Axios from 'axios'
@@ -26,7 +26,9 @@ function Transaction() {
     const [weight, setWeight] = useState('')
     const [courier, setCourier] = useState('jne')
     const [modal, setModal] = useState(false);
-    const [cost, setCost] = useState(null)
+    const [cost, setCost] = useState([])
+    const [addressProtect, setAddressProtect] = useState('')
+    const [destinationRJ, setDestinationRJ] = useState('')
 
     const toggleModal= () => setModal(!modal);
 
@@ -51,8 +53,9 @@ function Transaction() {
 
     const renderProduct = (originId,address) => {
         return dataCart.map((val)=> {
-            return(
-                <div className='row'>
+            if(select === val.productId){
+                return(
+                    <div className='row'>
                     <div className='col-6'>
                         <div className='row'>
                             <div className='col-6'style={{backgroundColor:'green'}} >
@@ -76,46 +79,134 @@ function Transaction() {
                     </div>
                     <div className='col-6'>
                         <div className='m-3'>   
-                            <div>Pilih Durasi</div>
-                            <ButtonDropdown isOpen={dropdownOpen} toggle={toggle} onClick={()=> setSelect(val.productId) } >
+                            <div>Pilih Durasi Pengiriman</div>
+                            <ButtonDropdown isOpen={dropdownOpen} toggle={toggle} onClick={()=> setSelect(val.productId) }>
+                                {cost.length>0
+                                ?
                                 <DropdownToggle caret color="info">
-                                    Pengiriman
-                                    </DropdownToggle>
-                                {renderDropdown(address, select,val.productId, originId,val.city_id_rajaongkir, val.weight*val.qty)}
+                                    Pilih
+                                </DropdownToggle>
+                                :
+                                <DropdownToggle caret color="info" disabled>
+                                    loading...
+                                </DropdownToggle>
+                                }
+                                {renderDropdown(address, select,val.productId, originId,val.city_id_rajaongkir, val.weight*val.qty)} 
                             </ButtonDropdown>
+
                             </div>
                         </div>
                 </div>
             )
+        }
+        return(
+            <div className='row'>
+            <div className='col-6'>
+                <div className='row'>
+                    <div className='col-6'style={{backgroundColor:'green'}} >
+                        <div style={{backgroundColor:'blue',height:'200',width:'60'}}>
+                          {val.nama_product}  </div>
+                            {val.image_product}
+                    </div><hr></hr>
+                    <div className='col-6'>
+                        <div className=''><h5>{val.username}</h5></div>
+                        <div style={{color: 'grey'}}>{val.city_name}</div>
+                        <div><strong>{val.nama_product}</strong></div>
+                        <div style={{color: 'orange'}}><strong>Rp {(val.harga.toLocaleString())}</strong></div>
+                        <div style={{color: 'grey'}} >{val.qty} barang ({val.condition}) berat {val.weight*val.qty} gram</div>
+                        <hr className=' m-2'></hr>
+                        <hr></hr>
+                    </div>
+                </div>
+            </div>
+            <div className='col-6'>
+                <div className='m-3'>   
+                    <div>Pilih Durasi Pengiriman</div>
+                    <ButtonDropdown toggle={()=> handelSelect(val.productId)} >
+                        <DropdownToggle caret color="info">
+                            Pengiriman
+                        </DropdownToggle>
+                    </ButtonDropdown>
+                    {cost.length>0
+                    ?
+                        <div className='m-auto' >
+                        Subtotal : <b style={{color: 'orange'}} >Rp {((val.harga*val.qty)+cost[1].cost[0].value).toLocaleString()}</b>
+                        </div>
+                    :
+                        <div className='m-auto' >
+                        Subtotal : <b style={{color: 'orange'}} >Rp {(val.harga*val.qty).toLocaleString()}</b>
+                        </div>
+                    }
+
+                    </div>
+                </div>
+        </div>
+        )
         })
     }
     
-    const toggle = () => setOpen(!dropdownOpen);
+    const handelSelect = (productId) => {
+        setSelect(productId)
+        setCost([]) 
+    }
+
+    const toggle = () => {
+       setOpen(!dropdownOpen)
+        
+    };
 
     const renderDropdown = ( address, select, id, originId, destination, weight) => {
         if(select === id){
             if(address) {
-                if(cost === null && originId){
-                    cekOngkir(originId,destination, weight)
+                console.log(originId,destination,'=', destinationRJ,weight) 
+                if(cost.length>0 && destination==destinationRJ){
+                    return(
+                        cost.length>2
+                        ?
+                    <DropdownMenu>
+                        <DropdownItem onClick={()=> console.log('j')}>
+                        <b>Ekonomis ({cost[0].cost[0].etd} hari)</b>
+                        <div color='grey'>Rp{cost[0].cost[0].value}</div>
+                        </DropdownItem>
+                        <DropdownItem onClick={()=> console.log('HOOOO')}>
+                        <b>Reguler ({cost[1].cost[0].etd} hari)</b>
+                        <div color='grey'>Rp{cost[1].cost[0].value}</div>
+                        </DropdownItem>
+                        <DropdownItem onClick={()=> console.log('HOOOO')}>
+                        <b>Next day ({cost[2].cost[0].etd} hari)</b>
+                        <div color='grey'>Rp{cost[2].cost[0].value}</div>
+                        </DropdownItem>
+                    </DropdownMenu>    
+                    :
+                    <DropdownMenu>
+                            <DropdownItem onClick={()=> handlePengiriman()}>
+                            <b>Ekonomis ({cost[0].cost[0].etd} hari)</b>
+                            <div color='grey'>Rp{cost[0].cost[0].value}</div>
+                            </DropdownItem>
+                            <DropdownItem onClick={()=> console.log('HOOOO')}>
+                            <b>Reguler ({cost[1].cost[0].etd} hari)</b>
+                            <div color='grey'>Rp{cost[1].cost[0].value}</div>
+                            </DropdownItem>
+                        </DropdownMenu>    
+                )}else if(originId ){
                     console.log('cek ONGKIR')
+                    cekOngkir(originId,destination, weight)
             }
-            console.log(originId,destination,weight)
-            if(cost){
-                return(
-                    cost.map((item)=>{
-                        return(
-                            <DropdownMenu>
-                    <DropdownItem>{item.service}</DropdownItem>
-                    <DropdownItem>{item.description}</DropdownItem>
-                </DropdownMenu>
-                )
-            })
-            )
+        }else if(addressProtect === 'oke'){
+            // setAddressProtect('oke')
+            console.log('YEAY')
+        }else{
+            alert('Pilih Alamat pengiriman')
+            setAddressProtect('oke')
         }
-        }
-        else{alert('Pilih Alamat pengiriman')}
     }
     }
+
+    const handlePengiriman = () => {
+        // renderSubtotal()
+    }
+
+    
 
     const cekOngkir = async (originId,destination,weight) => {
         let data = {
@@ -124,7 +215,7 @@ function Transaction() {
             weight: weight,
             courier: 'jne'
         }
-        console.log(data)
+        console.log(data,'ININI DATA DARI dsdFUNCTION')
         let response = await Axios({
             method:'POST',
             url: `https://cors-anywhere.herokuapp.com/https://api.rajaongkir.com/starter/cost`,
@@ -134,8 +225,11 @@ function Transaction() {
                 'key': 'ab74ed9491c2f80c0636e67cbec13c0e'
             },
         })
-        console.log(response.data.rajaongkir.results[0].costs)
+        console.log(response.data.rajaongkir.results[0].costs, 'INI RESPONSE DARI FUNCTION')
+        console.log(response.data.rajaongkir, 'INI RAJAONGKIR LENGKAP')
+        console.log(response.data.rajaongkir.destination_details.city_id, 'INI DESTANATION')
         setCost(response.data.rajaongkir.results[0].costs)
+        setDestinationRJ(response.data.rajaongkir.destination_details.city_id)
     }
 
     const renderTotal = () => {
@@ -186,6 +280,7 @@ function Transaction() {
     const handleAddress = (address_id,city_id) => {
         setAddress(address_id)
         setOriginId(city_id)
+        setCost([])
     }
 
     const renderAddress = (address) => {
@@ -225,7 +320,27 @@ function Transaction() {
                             </tfoot>
                         </Table>
                         <hr ></hr>
-                            {renderProduct( originId, address)}
+                        {renderProduct( originId, address)}
+                            {/* <ButtonDropdown isOpen={dropdownOpen} toggle={toggle} >
+                                <DropdownToggle caret color="info" >
+                                    Pengiriman
+                                </DropdownToggle>
+                                <DropdownMenu isOpen={dropdownOpen} toggle={toggle}>
+                    <DropdownItem onClick={()=> handlePengiriman()}>HAI</DropdownItem>
+                    <DropdownItem onClick={()=> console.log('HOOOO')}>HOOO</DropdownItem>
+                    <DropdownItem onClick={()=> console.log('HEEE')}>HEEEE</DropdownItem>
+                        </DropdownMenu>    
+                            </ButtonDropdown>
+                            <ButtonDropdown isOpen={dropdownOpen} toggle={toggle} >
+                                <DropdownToggle caret color="info" >
+                                    Pengiriman
+                                </DropdownToggle>
+                                <DropdownMenu isOpen={dropdownOpen} toggle={toggle}>
+                    <DropdownItem onClick={()=> handlePengiriman()}>HAI</DropdownItem>
+                    <DropdownItem onClick={()=> console.log('HOOOO')}>HOOO</DropdownItem>
+                    <DropdownItem onClick={()=> console.log('HEEE')}>HEEEE</DropdownItem>
+                        </DropdownMenu>    
+                            </ButtonDropdown> */}
                 </div>
                 <div className='col-4'>
                     < ListGroup>

@@ -56,8 +56,8 @@ function NavbarAdmin() {
                   <NavbarText>Username</NavbarText>
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem>
-                  Profile
+                <DropdownItem onClick={()=> console.log('PROFILE')}>
+                 <div>Profile</div>
                 </DropdownItem>
                 <DropdownItem>
                   Image
