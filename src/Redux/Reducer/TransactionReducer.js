@@ -3,6 +3,7 @@ import { API_TRANSACTION_START, API_TRANSACTION_SUCCESS, API_TRANSACTION_FAILED,
 const INITIAL_STATE = {
     dataCart : [],
     userAddress: [],
+    userTrans:[],
     loading : false
 }
 

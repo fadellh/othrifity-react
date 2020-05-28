@@ -13,6 +13,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchTransaction,fetchUserAddress } from '../Redux/Action';
 import Axios from 'axios'
 import qs from 'qs'
+import update from 'react-addons-update'
+import RenderModalPayment from '../ComponentRender/RenderModalPayment'
+
 
 function Transaction() {
     const [dropdownOpen, setOpen] = useState(false);
@@ -20,6 +23,7 @@ function Transaction() {
     const [totalPrice, setTotalPrice] = useState([])
     const [donasi, setDonasi] = useState(false)
     const [select, setSelect] = useState(null)
+    const [selectIndex, setSelectIndex] = useState(null)
     const [address, setAddress] = useState(null)
     const [originId, setOriginId] = useState('')
     const [destination, setDestination] = useState('')
@@ -29,6 +33,12 @@ function Transaction() {
     const [cost, setCost] = useState([])
     const [addressProtect, setAddressProtect] = useState('')
     const [destinationRJ, setDestinationRJ] = useState('')
+    const [totalArr, setTotalArr] = useState([])
+    const [donasiVal] = useState(5000)
+    const [totalBelanja, setTotalBelanja] = useState('')
+    console.log(totalArr, 'INI TOTAL ONGKIR')
+    console.log(selectIndex)
+    console.log(select)
 
     const toggleModal= () => setModal(!modal);
 
@@ -52,26 +62,32 @@ function Transaction() {
     console.log(userAddress)
 
     const renderProduct = (originId,address) => {
-        return dataCart.map((val)=> {
-            if(select === val.productId){
+        return dataCart.map((val, index)=> {
+            if(select === val.productId && selectIndex === index){
                 return(
                     <div className='row'>
                     <div className='col-6'>
                         <div className='row'>
-                            <div className='col-6'style={{backgroundColor:'green'}} >
-                                <div style={{backgroundColor:'blue',height:'200',width:'60'}}>
+                            <div className='col-6'style={{backgroundColor:'skyblue'}} >
+                                <div style={{backgroundColor:'white',height:'200',width:'60'}}>
                                   {val.nama_product}  </div>
                                     {val.image_product}
                             </div><hr></hr>
                             <div className='col-6'>
-                                <div className=''><h5>{val.username}</h5></div>
+                                <div className=''><h5>{index+1}{val.username}</h5></div>
                                 <div style={{color: 'grey'}}>{val.city_name}</div>
                                 <div><strong>{val.nama_product}</strong></div>
                                 <div style={{color: 'orange'}}><strong>Rp {(val.harga.toLocaleString())}</strong></div>
                                 <div style={{color: 'grey'}} >{val.qty} barang ({val.condition}) berat {val.weight*val.qty} gram</div>
                                 <hr className=' m-2'></hr>
                                 <div className='m-auto' >
-                                Subtotal : <b style={{color: 'orange'}} >Rp {(val.harga*val.qty).toLocaleString()}</b>
+                                Subtotal : 
+                                 {totalArr[index]
+                                 ?
+                                 <b style={{color: 'orange'}} >Rp {((val.harga*val.qty)+totalArr[index].value).toLocaleString()}</b>
+                                 :
+                                <b style={{color: 'orange'}} >Rp {(val.harga*val.qty).toLocaleString()}</b>
+                                }   
                                 </div>
                                 <hr></hr>
                             </div>
@@ -91,9 +107,16 @@ function Transaction() {
                                     loading...
                                 </DropdownToggle>
                                 }
-                                {renderDropdown(address, select,val.productId, originId,val.city_id_rajaongkir, val.weight*val.qty)} 
+                                {renderDropdown(address, select,selectIndex,index, val.productId, originId,val.city_id_rajaongkir, val.weight*val.qty)} 
                             </ButtonDropdown>
-
+                            {totalArr[index]?
+                            <div>
+                            <b>Kurir Pilihan</b>
+                            <div style={{color:'grey'}}>Rp{(totalArr[index].value).toLocaleString()} ({totalArr[index].etd} hari)</div>
+                            </div>
+                            :
+                            null
+                            }
                             </div>
                         </div>
                 </div>
@@ -103,18 +126,27 @@ function Transaction() {
             <div className='row'>
             <div className='col-6'>
                 <div className='row'>
-                    <div className='col-6'style={{backgroundColor:'green'}} >
-                        <div style={{backgroundColor:'blue',height:'200',width:'60'}}>
+                    <div className='col-6'style={{backgroundColor:'skyblue'}} >
+                        <div style={{backgroundColor:'white',height:'200',width:'60'}}>
                           {val.nama_product}  </div>
                             {val.image_product}
                     </div><hr></hr>
                     <div className='col-6'>
-                        <div className=''><h5>{val.username}</h5></div>
+                        <div className=''><h5>{index+1}{val.username}</h5></div>
                         <div style={{color: 'grey'}}>{val.city_name}</div>
                         <div><strong>{val.nama_product}</strong></div>
                         <div style={{color: 'orange'}}><strong>Rp {(val.harga.toLocaleString())}</strong></div>
                         <div style={{color: 'grey'}} >{val.qty} barang ({val.condition}) berat {val.weight*val.qty} gram</div>
                         <hr className=' m-2'></hr>
+                        <div className='m-auto' >
+                        Subtotal : 
+                            {totalArr[index]
+                            ?
+                            <b style={{color: 'orange'}} >Rp {((val.harga*val.qty)+totalArr[index].value).toLocaleString()}</b>
+                            :
+                            <b style={{color: 'orange'}} >Rp {(val.harga*val.qty).toLocaleString()}</b>
+                            }   
+                        </div>
                         <hr></hr>
                     </div>
                 </div>
@@ -122,22 +154,19 @@ function Transaction() {
             <div className='col-6'>
                 <div className='m-3'>   
                     <div>Pilih Durasi Pengiriman</div>
-                    <ButtonDropdown toggle={()=> handelSelect(val.productId)} >
+                    <ButtonDropdown toggle={()=> handelSelect(val.productId, index)} >
                         <DropdownToggle caret color="info">
                             Pengiriman
                         </DropdownToggle>
                     </ButtonDropdown>
-                    {cost.length>0
-                    ?
-                        <div className='m-auto' >
-                        Subtotal : <b style={{color: 'orange'}} >Rp {((val.harga*val.qty)+cost[1].cost[0].value).toLocaleString()}</b>
-                        </div>
+                    {totalArr[index]?
+                    <div>
+                    <b>Kurir Pilihan</b>
+                    <div style={{color:'grey'}}>Rp{(totalArr[index].value).toLocaleString()} ({totalArr[index].etd} hari)</div>
+                    </div>
                     :
-                        <div className='m-auto' >
-                        Subtotal : <b style={{color: 'orange'}} >Rp {(val.harga*val.qty).toLocaleString()}</b>
-                        </div>
+                    null
                     }
-
                     </div>
                 </div>
         </div>
@@ -145,8 +174,9 @@ function Transaction() {
         })
     }
     
-    const handelSelect = (productId) => {
+    const handelSelect = (productId, index) => {
         setSelect(productId)
+        setSelectIndex(index)
         setCost([]) 
     }
 
@@ -155,35 +185,36 @@ function Transaction() {
         
     };
 
-    const renderDropdown = ( address, select, id, originId, destination, weight) => {
+    const renderDropdown = ( address, select, selectIndex,index, id, originId, destination, weight) => {
         if(select === id){
             if(address) {
-                console.log(originId,destination,'=', destinationRJ,weight) 
+                console.log(originId,destination,'=', destinationRJ,weight)
+                console.log(selectIndex,index,"INI KUMPULAN INDEX") 
                 if(cost.length>0 && destination==destinationRJ){
                     return(
                         cost.length>2
                         ?
                     <DropdownMenu>
-                        <DropdownItem onClick={()=> console.log('j')}>
+                        <DropdownItem onClick={()=> handlePengiriman(cost[0].cost[0].value,cost[0].cost[0].etd)}>
                         <b>Ekonomis ({cost[0].cost[0].etd} hari)</b>
                         <div color='grey'>Rp{cost[0].cost[0].value}</div>
                         </DropdownItem>
-                        <DropdownItem onClick={()=> console.log('HOOOO')}>
+                        <DropdownItem onClick={()=> handlePengiriman(cost[1].cost[0].value,cost[1].cost[0].etd)}>
                         <b>Reguler ({cost[1].cost[0].etd} hari)</b>
                         <div color='grey'>Rp{cost[1].cost[0].value}</div>
                         </DropdownItem>
-                        <DropdownItem onClick={()=> console.log('HOOOO')}>
+                        <DropdownItem onClick={()=> handlePengiriman(cost[2].cost[0].value,cost[2].cost[0].etd)}>
                         <b>Next day ({cost[2].cost[0].etd} hari)</b>
                         <div color='grey'>Rp{cost[2].cost[0].value}</div>
                         </DropdownItem>
                     </DropdownMenu>    
                     :
                     <DropdownMenu>
-                            <DropdownItem onClick={()=> handlePengiriman()}>
+                            <DropdownItem onClick={()=> handlePengiriman(cost[0].cost[0].value,cost[0].cost[0].etd)}>
                             <b>Ekonomis ({cost[0].cost[0].etd} hari)</b>
                             <div color='grey'>Rp{cost[0].cost[0].value}</div>
                             </DropdownItem>
-                            <DropdownItem onClick={()=> console.log('HOOOO')}>
+                            <DropdownItem onClick={()=> handlePengiriman(cost[1].cost[0].value,cost[1].cost[0].etd)}>
                             <b>Reguler ({cost[1].cost[0].etd} hari)</b>
                             <div color='grey'>Rp{cost[1].cost[0].value}</div>
                             </DropdownItem>
@@ -202,8 +233,27 @@ function Transaction() {
     }
     }
 
-    const handlePengiriman = () => {
-        // renderSubtotal()
+    const totalOngkir = totalArr.reduce((totKir, val)=> totKir + val.value,0)
+    console.log(totalOngkir, "ININI TOTAL ONGKIR")
+    const renderTotalOngkir = (jumlah, total) => {
+        return totalOngkir
+    }
+    console.log(totalArr, "HASIL TOTAL")
+
+    const handlePengiriman = (cost,etd) => {
+        console.log(etd,"INI ETD")
+        const totalUpdate = totalArr
+        if(selectIndex>totalUpdate.length-1){
+            setTotalArr(totalArr => [...totalArr,{id:select,value:cost,etd:etd}])
+        }
+        else if(totalArr[selectIndex].id === select){
+           setTotalArr(update(totalUpdate,{
+               [selectIndex]: {
+                   value: {$set:cost},
+                   etd:{$set:etd}
+               }
+           }))
+       }
     }
 
     
@@ -320,37 +370,38 @@ function Transaction() {
                             </tfoot>
                         </Table>
                         <hr ></hr>
+                        <div >
                         {renderProduct( originId, address)}
-                            {/* <ButtonDropdown isOpen={dropdownOpen} toggle={toggle} >
-                                <DropdownToggle caret color="info" >
-                                    Pengiriman
-                                </DropdownToggle>
-                                <DropdownMenu isOpen={dropdownOpen} toggle={toggle}>
-                    <DropdownItem onClick={()=> handlePengiriman()}>HAI</DropdownItem>
-                    <DropdownItem onClick={()=> console.log('HOOOO')}>HOOO</DropdownItem>
-                    <DropdownItem onClick={()=> console.log('HEEE')}>HEEEE</DropdownItem>
-                        </DropdownMenu>    
-                            </ButtonDropdown>
-                            <ButtonDropdown isOpen={dropdownOpen} toggle={toggle} >
-                                <DropdownToggle caret color="info" >
-                                    Pengiriman
-                                </DropdownToggle>
-                                <DropdownMenu isOpen={dropdownOpen} toggle={toggle}>
-                    <DropdownItem onClick={()=> handlePengiriman()}>HAI</DropdownItem>
-                    <DropdownItem onClick={()=> console.log('HOOOO')}>HOOO</DropdownItem>
-                    <DropdownItem onClick={()=> console.log('HEEE')}>HEEEE</DropdownItem>
-                        </DropdownMenu>    
-                            </ButtonDropdown> */}
+                        </div>          
+                     
                 </div>
                 <div className='col-4'>
                     < ListGroup>
                             <ListGroupItem><h4>Ringkasan Belanja</h4></ListGroupItem>
-                            <ListGroupItem>Total Harga : 
+                            <ListGroupItem>Total Belanja : 
                                 <b style={{color: 'orange'}}> Rp{renderTotal().toLocaleString()}</b>
-                                {donasi?<div>Donasi: <b style={{color: 'orange'}}>Rp 5000</b> </div>:null}
+                                {donasi?<div>Donasi: <b style={{color: 'orange'}}>Rp{donasiVal.toLocaleString()}</b> </div>:null}
                                 {/* <div>Donasi: </div> */}
+                                {totalArr.length>0?
+                                <div>Total Ongkir : <b style={{color: 'orange'}}>Rp{renderTotalOngkir().toLocaleString()}</b></div>
+                                :
+                                null
+                                }
                             </ListGroupItem>
-                            {/* <ListGroupItem>Total Tagihan: <b style={{color: 'orange'}}> Rp{renderGrandTotal().toLocaleString()}</b> </ListGroupItem> */}
+                            <ListGroupItem><b>Total Tagihan:</b>
+                            {totalArr.length === dataCart.length
+                            ? <strong>
+                                {donasi
+                                ?
+                                <b style={{color: 'orange'}}>Rp{(renderTotal()+donasiVal+renderTotalOngkir()).toLocaleString()}</b> 
+                                :
+                                <b style={{color: 'orange'}}> Rp{(renderTotal()+renderTotalOngkir()).toLocaleString()}</b> 
+                                }
+                            </strong>
+                            :
+                            <strong style={{color: 'orange'}} > - </strong>
+                            } 
+                            </ListGroupItem>
                             <ListGroupItem>
                                 <InputGroup>
                                 <InputGroupAddon addonType="prepend" >
@@ -360,7 +411,13 @@ function Transaction() {
                                 </InputGroup>
                             </ListGroupItem>
                             <ListGroupItem>
-                                <Button>Pilih Pembayaran</Button>
+                                {/*Pake ternary totalArr.length === dataCart.length untuk Button pembayaran */}
+                                {/* {totalArr.length === dataCart.length
+                                ? */}
+                                <RenderModalPayment totalTagihan={donasi?renderTotal()+donasiVal+renderTotalOngkir():renderTotal()+renderTotalOngkir()} />
+                                {/* :
+                                <Button onClick={()=> alert("Pilih durasi pengiriman")} >Pembayaran</Button>
+                                } */}
                             </ListGroupItem>
                     </ListGroup>
                 </div>
