@@ -36,6 +36,7 @@ function Transaction() {
     const [totalArr, setTotalArr] = useState([])
     const [donasiVal] = useState(5000)
     const [totalBelanja, setTotalBelanja] = useState('')
+    const [viewTagih, setViewTagih] = useState([])
     console.log(totalArr, 'INI TOTAL ONGKIR')
     console.log(selectIndex)
     console.log(select)
@@ -54,7 +55,7 @@ function Transaction() {
         dispatch(fetchTransaction(1))
         dispatch(fetchUserAddress(1))
     }, [dispatch])
-    
+
 
     const dataCart = useSelector(state => state.dataTrans.dataCart)
     const userAddress = useSelector(state => state.dataTrans.userAddress)
@@ -234,29 +235,36 @@ function Transaction() {
     }
 
     const totalOngkir = totalArr.reduce((totKir, val)=> totKir + val.value,0)
+    
     console.log(totalOngkir, "ININI TOTAL ONGKIR")
     const renderTotalOngkir = (jumlah, total) => {
         return totalOngkir
     }
     console.log(totalArr, "HASIL TOTAL")
 
-    const handlePengiriman = (cost,etd) => {
-        console.log(etd,"INI ETD")
-        const totalUpdate = totalArr
-        if(selectIndex>totalUpdate.length-1){
-            setTotalArr(totalArr => [...totalArr,{id:select,value:cost,etd:etd}])
+    const totalWeightFromViewTagih = viewTagih.reduce((a,b)=>a+b.weight,0)
+    const totalWeightFromTotalArr = totalArr.reduce((a,b)=>a + b.weight,0)
+    console.log(totalWeightFromViewTagih,"INI TOTAL WEIGHT ")
+    console.log(totalWeightFromTotalArr,"INI TOTAL WEIGHT ")
+    const sortingOngkir = () => {
+        for(let i=0;i<dataCart.length;i++){
+            setTotalArr(totalArr => [...totalArr,{id:dataCart[i].productId,value:0,etd:0,weight:0}])
+            setViewTagih(viewTagih => [...viewTagih,{weight:dataCart[i].weight}])
         }
-        else if(totalArr[selectIndex].id === select){
+    }
+
+    const handlePengiriman = (cost,etd) => {
+        const totalUpdate = totalArr
+        if(totalArr[selectIndex].id === select){
            setTotalArr(update(totalUpdate,{
                [selectIndex]: {
                    value: {$set:cost},
-                   etd:{$set:etd}
+                   etd:{$set:etd},
+                   weight:{$set:dataCart[selectIndex].weight}
                }
            }))
        }
     }
-
-    
 
     const cekOngkir = async (originId,destination,weight) => {
         let data = {
@@ -265,7 +273,6 @@ function Transaction() {
             weight: weight,
             courier: 'jne'
         }
-        console.log(data,'ININI DATA DARI dsdFUNCTION')
         let response = await Axios({
             method:'POST',
             url: `https://cors-anywhere.herokuapp.com/https://api.rajaongkir.com/starter/cost`,
@@ -275,9 +282,6 @@ function Transaction() {
                 'key': 'ab74ed9491c2f80c0636e67cbec13c0e'
             },
         })
-        console.log(response.data.rajaongkir.results[0].costs, 'INI RESPONSE DARI FUNCTION')
-        console.log(response.data.rajaongkir, 'INI RAJAONGKIR LENGKAP')
-        console.log(response.data.rajaongkir.destination_details.city_id, 'INI DESTANATION')
         setCost(response.data.rajaongkir.results[0].costs)
         setDestinationRJ(response.data.rajaongkir.destination_details.city_id)
     }
@@ -292,7 +296,6 @@ function Transaction() {
 
     const renderGrandTotal = () => {
         let output = 0
-        let donasi =  
         dataCart.forEach((val)=> {
             output += (val.harga*val.qty)
         })
@@ -331,6 +334,7 @@ function Transaction() {
         setAddress(address_id)
         setOriginId(city_id)
         setCost([])
+        sortingOngkir()
     }
 
     const renderAddress = (address) => {
@@ -381,15 +385,16 @@ function Transaction() {
                             <ListGroupItem>Total Belanja : 
                                 <b style={{color: 'orange'}}> Rp{renderTotal().toLocaleString()}</b>
                                 {donasi?<div>Donasi: <b style={{color: 'orange'}}>Rp{donasiVal.toLocaleString()}</b> </div>:null}
-                                {/* <div>Donasi: </div> */}
+                                
                                 {totalArr.length>0?
                                 <div>Total Ongkir : <b style={{color: 'orange'}}>Rp{renderTotalOngkir().toLocaleString()}</b></div>
                                 :
                                 null
                                 }
+                                <div >Biaya Layanan: <b style={{color: 'orange'}}>Rp{(5/100*renderTotal()).toLocaleString()}</b></div>
                             </ListGroupItem>
                             <ListGroupItem><b>Total Tagihan:</b>
-                            {totalArr.length === dataCart.length
+                            {totalWeightFromViewTagih === totalWeightFromTotalArr && address
                             ? <strong>
                                 {donasi
                                 ?
@@ -414,7 +419,13 @@ function Transaction() {
                                 {/*Pake ternary totalArr.length === dataCart.length untuk Button pembayaran */}
                                 {/* {totalArr.length === dataCart.length
                                 ? */}
-                                <RenderModalPayment totalTagihan={donasi?renderTotal()+donasiVal+renderTotalOngkir():renderTotal()+renderTotalOngkir()} />
+                                <RenderModalPayment 
+                                totalTagihan={donasi?renderTotal()+donasiVal+renderTotalOngkir():renderTotal()+renderTotalOngkir()}
+                                donasi={donasi?donasiVal:null}
+                                totalOngkir={renderTotalOngkir()}
+                                serviceFee={(5/100*renderTotal())}
+                                totalBelanja={renderTotal()}
+                                 />
                                 {/* :
                                 <Button onClick={()=> alert("Pilih durasi pengiriman")} >Pembayaran</Button>
                                 } */}

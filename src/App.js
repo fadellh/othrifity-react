@@ -6,6 +6,7 @@ import Sidebar from "./Component/Sidebar";
 import ManageUser from './Pages/ManageUser'
 import Transaction from './Pages/Transaction'
 import RajaOngkir from './Pages/RajaOngkir'
+import PaymentAlert from './Pages/PaymentAlert'
 
 class App extends Component {
   render() {
@@ -22,6 +23,7 @@ class App extends Component {
           <Route path='/manage-user' component={ManageUser} />
           <Route path='/transaction' component={Transaction} />
           <Route path='/raja' component={RajaOngkir} />
+          <Route path='/thanks' component={PaymentAlert} />
         </div>
         </div>
       </div>

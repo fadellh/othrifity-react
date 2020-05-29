@@ -1,25 +1,60 @@
 import React,{useState} from 'react'
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter,ListGroupItem, Input } from 'reactstrap';
+import Buttonn from '@material-ui/core/Button'
+import { Redirect } from 'react-router-dom';
 
-
-function RenderModalPayment({totalTagihan}) {
+function RenderModalPayment({totalTagihan,donasi,totalOngkir,serviceFee,totalBelanja}) {
     
       const [modal, setModal] = useState(false);
-    
       const toggle = () => setModal(!modal);
+      const [bank, setBank] = useState('')
+      const [rekeningNum, setRekeningNum] = useState('')
+      const [rekeningName, setRekeningName] = useState('')
+
+    const handlePayment = () => {
+        // dispatch action addPayment, update payment, invoice
+        // Redirect ke halaman lain
+        console.log('BERHASILL')
+    }
+
 
     return (
         <div>
             <Button color="danger" onClick={toggle}>Pilih Pembayaran</Button>
             <Modal isOpen={modal} toggle={toggle}>
-                <ModalHeader toggle={toggle}>Modal title</ModalHeader>
-                <ModalBody>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </ModalBody>
-                <ModalFooter>
-                    <div>Total Tagihan {totalTagihan} </div>
-                <Button color="primary" onClick={toggle}>Do Something</Button>{' '}
-                <Button color="secondary" onClick={toggle}>Cancel</Button>
+                <ModalHeader toggle={toggle} style={{color:'grey'}} >Pembayaran</ModalHeader>
+                    <ListGroupItem className='d-flex justify-content-between'>
+                        <div>Total Tagihan : {<div style={{color:'orange'}} ><b>Rp{(totalTagihan).toLocaleString()}</b></div>}</div>
+                        <Buttonn>Detail</Buttonn>
+                    </ListGroupItem>
+                    <ListGroupItem >
+                        <div >Transfer Bank</div>
+                        <Input type='select' width='10' onChange={(e)=> setBank(e.target.value)} >
+                            <option value='' >-Pilih Bank-</option>
+                            <option value='BNI' >BNI</option>
+                            <option value='MANDIRI' >MANDIRI</option>
+                            <option value='BCA' >BCA</option>
+                            <option value='BRI' >BRI</option>
+                            <option value='BRITAMA' >BRITAMA</option>
+                        </Input>
+                    </ListGroupItem>
+                    <ListGroupItem >
+                        <div className='mr-3' >No.Rekening</div>
+                        <Input placeholder="Contoh: 1234567" type='number' onChange={(e)=> setRekeningNum(e.target.value)} ></Input>
+                    </ListGroupItem>
+                    <ListGroupItem  >
+                        <div className='mr-3' >Nama Pemilik Rekening</div>
+                        <Input placeholder="Contoh: Fadhy"  onChange={(e)=> setRekeningName(e.target.value)} ></Input>
+                    </ListGroupItem>
+                <ModalFooter className='d-flex justify-content-between'>
+                {rekeningName&&rekeningNum&&bank
+                ?
+                <Button color="success" href='/thanks' onClick={()=> handlePayment() } block >
+                    Bayar
+                </Button>
+                :
+                <Button color="success" onClick={toggle} block disabled >Bayar</Button>
+                }
                 </ModalFooter>
             </Modal>
         </div>
