@@ -37,6 +37,8 @@ function Sidebar() {
                         <NavLink href='/'  className='bg-dark text-white border-0 thumbnail'>Revenue Toko</NavLink>
                         <NavLink href='/'  className='bg-dark text-white border-0 thumbnail'>Traffic</NavLink>
                         <NavLink href='/'  className='bg-dark text-white border-0 thumbnail'>Revenue Admin</NavLink><hr className='bg-secondary'></hr>
+                        <NavLink href='/'  className='bg-dark text-white border-0 thumbnail'>Revenue Admin</NavLink><hr className='bg-secondary'></hr>
+                        <NavLink href='/css'  className='bg-dark text-white border-0 thumbnail'>CSS</NavLink><hr className='bg-secondary'></hr>
                         <NavLink href='/raja'  className='bg-dark text-white border-0 thumbnail'>Raja Ongkir Data</NavLink><hr className='bg-secondary'></hr>
                     </ListGroupItem>
                   </ListGroup>

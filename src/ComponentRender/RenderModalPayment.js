@@ -1,9 +1,13 @@
-import React,{useState} from 'react'
+import React,{useState, useEffect} from 'react'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter,ListGroupItem, Input } from 'reactstrap';
 import Buttonn from '@material-ui/core/Button'
 import { Redirect } from 'react-router-dom';
+import { addPayment, getWaitingPayment } from '../Redux/Action';
+import { useDispatch,useSelector } from 'react-redux';
+import PaymentAlert from '../Pages/PaymentAlert'
+import {Route} from 'react-router-dom'
 
-function RenderModalPayment({totalTagihan,donasi,totalOngkir,serviceFee,totalBelanja}) {
+function RenderModalPayment({totalTagihan,donasi,totalOngkir,serviceFee,totalBelanja,dataCart,userId}) {
     
       const [modal, setModal] = useState(false);
       const toggle = () => setModal(!modal);
@@ -11,10 +15,18 @@ function RenderModalPayment({totalTagihan,donasi,totalOngkir,serviceFee,totalBel
       const [rekeningNum, setRekeningNum] = useState('')
       const [rekeningName, setRekeningName] = useState('')
 
+      const dispatch = useDispatch()
+     
+
     const handlePayment = () => {
         // dispatch action addPayment, update payment, invoice
         // Redirect ke halaman lain
+        //add payment
+        const shopDate = new Date().toLocaleString('en-US')
+        dispatch(addPayment(shopDate,totalTagihan,donasi,totalOngkir,serviceFee,totalBelanja,userId))
+        console.log(shopDate)
         console.log('BERHASILL')
+        console.log(shopDate)
     }
 
 
@@ -49,7 +61,7 @@ function RenderModalPayment({totalTagihan,donasi,totalOngkir,serviceFee,totalBel
                 <ModalFooter className='d-flex justify-content-between'>
                 {rekeningName&&rekeningNum&&bank
                 ?
-                <Button color="success" href='/thanks' onClick={()=> handlePayment() } block >
+                <Button color="success" href='thanks' onClick={()=> handlePayment() } block >
                     Bayar
                 </Button>
                 :

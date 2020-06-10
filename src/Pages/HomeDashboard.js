@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { DropdownToggle, Button, ButtonDropdown, DropdownItem, DropdownMenu } from 'reactstrap'
 // import {} from 'bootstrap-select'
 import update from 'react-addons-update'
+// import from ''
 
 function HomeDashboard() {
     // const [total, setTotal] = useState([
@@ -160,13 +161,28 @@ function HomeDashboard() {
             )
     }
 
+    const divStyle = {
+        container:{
+            display:'flex',
+            backgroundColor:'blue'
+        }
+    }
+
+    const container = {
+        backgroundColor:'pink'
+    }
+
 
     return (
-        <div>
-            <Button onClick={()=> handleTotal(total)}>
+        <div style={{ display:'flex',
+        backgroundColor:'blue',flexWrap:'wrap',}} >
+            <div style={container} >dskds</div>
+
+            <div style={{backgroundColor:'red'}} >ddfdfdf</div>
+            {/* <Button onClick={()=> handleTotal(total)}>
                 Nambah 1 value                
             </Button>
-            <div>
+            <div style={{backgroundColor:'blue'}} >
             <Button onClick={()=> handleTotalUpdate(cost, total, index, select)}>
                 Update  value                
             </Button>
@@ -201,7 +217,7 @@ function HomeDashboard() {
             {/* <h1>Hasil Jumlah Total : {jumlah}</h1>
             <Button onClick={(jumlah,total)=> renderTotal(jumlah,total) } >klik jumlah</Button> */}
            
-            <ButtonDropdown isOpen={dropdownOpen} toggle={toggle} >
+            {/* <ButtonDropdown isOpen={dropdownOpen} toggle={toggle} >
                 <DropdownToggle caret color="info">
                     Pilih
                 </DropdownToggle>
@@ -211,7 +227,7 @@ function HomeDashboard() {
                     <DropdownItem>Hsaas</DropdownItem>
                     <DropdownItem>Hsds</DropdownItem>
                 </DropdownMenu>
-            </ButtonDropdown>
+            </ButtonDropdown> */}
 
 
         </div>

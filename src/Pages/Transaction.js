@@ -51,15 +51,20 @@ function Transaction() {
         })
         console.log(response.data.rajaongkir.results, 'INI RAJA ONKIR')
     }
+
+    const userIdfromAuth = 1
     useEffect(() => {
-        dispatch(fetchTransaction(1))
-        dispatch(fetchUserAddress(1))
+        console.log("MASUK USEEFEEVVT")
+        dispatch(fetchTransaction(userIdfromAuth))
+        dispatch(fetchUserAddress(userIdfromAuth))
     }, [dispatch])
 
 
-    const dataCart = useSelector(state => state.dataTrans.dataCart)
+    const {dataCart} = useSelector(state => state.dataTrans)
     const userAddress = useSelector(state => state.dataTrans.userAddress)
-    console.log(dataCart)
+    const dataUser = useSelector(state => state.dataTrans.userAddress[0])
+   
+    console.log(dataCart,"Ini data Cart")
     console.log(userAddress)
 
     const renderProduct = (originId,address) => {
@@ -350,7 +355,7 @@ function Transaction() {
     }
      return (
         <div className='container'>
-            <div className='mb-3'>
+             <div className='mb-3'>
                 <h3>Checkout</h3>
             </div>
             <div className='row'>
@@ -359,12 +364,16 @@ function Transaction() {
                         <h5>Alamat Pengiriman</h5>
                     </div>
                     <hr ></hr>
-
-                    // Nama user, contact, alamat diambil dari fetchlistuser ketiga login
                         <Table>
                             <tbody>
-                                <tr> Nama User</tr>
-                                <tr> Contact</tr>
+                            {dataUser
+                            ?
+                            <div>
+                                <tr style={{fontWeight:'bold'}} >{dataUser.name}</tr>
+                                <tr style={{fontWeight:'normal'}} >{dataUser.phone}</tr>
+                            </div>
+                            :
+                            null}
                                 Alamat : <div style={{color: 'grey'}}>{renderAddress(address)}</div>
                             </tbody>
                             <tfoot>
@@ -416,24 +425,26 @@ function Transaction() {
                                 </InputGroup>
                             </ListGroupItem>
                             <ListGroupItem>
-                                {/*Pake ternary totalArr.length === dataCart.length untuk Button pembayaran */}
-                                {/* {totalArr.length === dataCart.length
-                                ? */}
+                                {/* Pake ternary totalArr.length === dataCart.length untuk Button pembayaran */}
+                                {totalArr.length === dataCart.length
+                                ?
                                 <RenderModalPayment 
                                 totalTagihan={donasi?renderTotal()+donasiVal+renderTotalOngkir():renderTotal()+renderTotalOngkir()}
-                                donasi={donasi?donasiVal:null}
+                                donasi={donasi?donasiVal:0}
                                 totalOngkir={renderTotalOngkir()}
                                 serviceFee={(5/100*renderTotal())}
                                 totalBelanja={renderTotal()}
+                                dataCart={dataCart}
+                                userId={userIdfromAuth}
                                  />
-                                {/* :
+                                 : 
                                 <Button onClick={()=> alert("Pilih durasi pengiriman")} >Pembayaran</Button>
-                                } */}
+                                 }
                             </ListGroupItem>
                     </ListGroup>
                 </div>
-            </div>
-            <hr ></hr>
+            </div> 
+            <hr ></hr> 
         </div>
     )
 }
