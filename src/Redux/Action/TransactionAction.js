@@ -75,10 +75,8 @@ export const addImage = (id,formData) => {
                 }
             }
             let res = await Axios.post(`${API_URL}/transaction/add-image/${id}`,formData,headers)
-            console.log(res.data.image)
             dispatch({
                 type: API_ADD_IMG_SUCCESS,
-                payload: res.data.image
             }) 
         }catch(err){
             dispatch({

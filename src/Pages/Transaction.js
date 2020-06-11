@@ -41,7 +41,7 @@ function Transaction() {
     console.log(selectIndex)
     console.log(select)
 
-    const toggleModal= () => setModal(!modal);
+ 
 
     const fetchOngkir = async () => {
         let response = await Axios.get(`https://cors-anywhere.herokuapp.com/https://api.rajaongkir.com/starter/city`, {
@@ -306,6 +306,13 @@ function Transaction() {
         })
 
     }
+    const toggleModal= () => setModal(!modal);
+    
+    const handleTogleAddress = () => {
+        setTotalArr([])
+        setViewTagih([])
+        toggleModal()
+    }
 
     const modalAddress = () => {
         return(
@@ -340,6 +347,7 @@ function Transaction() {
         setOriginId(city_id)
         setCost([])
         sortingOngkir()
+        toggleModal()
     }
 
     const renderAddress = (address) => {
@@ -377,7 +385,7 @@ function Transaction() {
                                 Alamat : <div style={{color: 'grey'}}>{renderAddress(address)}</div>
                             </tbody>
                             <tfoot>
-                            <Button color="danger" onClick={toggleModal}>Pilih Alamat Lain</Button>
+                            <Button color="danger" onClick={handleTogleAddress}>Pilih Alamat Lain</Button>
                             <Button className='ml-3 mt-3 mb-3'>Tambah Alamat Lain</Button>    
                             {modalAddress()}                                
                             </tfoot>

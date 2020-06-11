@@ -1,10 +1,8 @@
 import React,{useState,useRef,useEffect} from 'react'
 import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import { Jumbotron,CustomInput,Button } from 'reactstrap';
+import { Jumbotron} from 'reactstrap';
 import { useSelector, useDispatch } from 'react-redux';
-import {addImage, getWaitingPayment} from '../Redux/Action/TransactionAction'
-import { API_URL } from '../Support/API_URL';
+import RenderCardSubmit from '../ComponentRender/RenderCardSubmit';
 
 function PaymentAlert() {
 
@@ -50,13 +48,6 @@ function PaymentAlert() {
         }, 1000)
     }
 
-    // if(waitingPay&&protectWait){
-    //     setStartDate(waitingPay[1].date)
-    //     setProtectWait(false)
-    //     // startTimer()
-        
-    // }
-
     useEffect(() => {
         console.log('MULAI USE EFFECT')
         // dispatch(getWaitingPayment(userIdfromAuth))
@@ -66,64 +57,25 @@ function PaymentAlert() {
         }
     },[])
 
-  
-
-    const [image, setImage] = useState({
-        imageName : 'Select File...',
-        imageFile : undefined
-    })
-    
-    let handleImage = (e) => {
-        if(e.target.files[0]){
-            setImage({
-                imageFile : e.target.files[0],
-                imageName : e.target.files[0].name
-            })
-        }else{
-            setImage({
-                imageName : 'Select File...',
-                imageFile : undefined
-            })
-        }
-    }
-
-    let handleSubmit = () => {
-        // file image di image.imageFile
-        let id = 38
-        let formData = new FormData();
-        formData.append('image', image.imageFile);
-        setImage({
-            imageName : 'Select File...',
-            imageFile : undefined
-        })
-        dispatch(
-            addImage(id, formData)
-        )
-        // setUpdate(true)
-    }
-
-    const {imagePath} = useSelector(state=>state.dataTrans)
-
-
     return (
         <Container className='m-3 p-3 border d-flex flex-column ' >
             <h5 className='d-flex justify-content-center m-3 p-2' >Segera selesaikan pembayaran Anda sebelum stok habis</h5>
             <Jumbotron fluid className='d-flex justify-content-center m-2 p-2' >
                 <Container >
-                    <h1 className="display-5 d-flex justify-content-center">Fluid jumbotron</h1>
-                    <p className="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+                    <h4 className="display-5 d-flex justify-content-center">Hello!</h4>
+                    <p className="lead display-5 d-flex justify-content-center" style={{color:'grey'}} >Sisa waktu pembayaran terdekat anda</p>
                     <div className="timer">
                     <div>
                         {timerHours}
-                        <span>h</span>
+                        <span> Jam:</span>
                     </div>
                     <div>
                         {timerMinutes}
-                        <span>m</span>
+                        <span> Menit:</span>
                     </div>
                     <div>
                         {timerSeconds}
-                        <span>s</span>
+                        <span> Detik:</span>
                     </div>
                 </div>
                 {/* {dateTime} */}
@@ -131,26 +83,7 @@ function PaymentAlert() {
             </Jumbotron>
             <div class="d-flex flex-column bd-highlight">
                 <div class="d-flex justify-content-center">
-                    <Jumbotron fluid>
-                        <Container>
-                            <h1 className="display-5 d-flex justify-content-center">Fluid jumbotron</h1>
-                        <CustomInput
-                         type='file'
-                         name='imageName'
-                         id='imageName'
-                         label={image.imageName}
-                         onChange={handleImage}
-                        />
-                         <div style={{marginTop:10}} >
-                            <Button className='form-control' color='primary' onClick={handleSubmit}>
-                                {
-                                    'Submit'
-                                }
-                            </Button>
-                            <img src={imagePath?API_URL+imagePath:null} alt='Gambar Todo' height='100px'/>
-                        </div>
-                        </Container>
-                    </Jumbotron>
+                    <RenderCardSubmit data={waitingPay} />                    
                 </div>
             </div>
          </Container>

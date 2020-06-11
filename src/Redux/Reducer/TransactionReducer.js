@@ -6,7 +6,6 @@ const INITIAL_STATE = {
     userTrans:[],
     loading : false,
     shopDate:'',
-    imagePath:'',
     waitingPay:''
 }
 
@@ -29,7 +28,6 @@ export const transactionReducer = (state=INITIAL_STATE, action)=> {
             return{
                 ...state,
                 loading: false,
-                imagePath: action.payload
             }
         case API_FETCH_ADDRESS_SUCCESS: 
         console.log(action.payload,"INI REDUCER UNTUK ADRESSS")

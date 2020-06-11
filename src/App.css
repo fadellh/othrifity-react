@@ -93,8 +93,8 @@
   }
   .timer > div {
     padding: 10px;
-    background: #444;
-    color: #fff;
+    background:'pink';
+    color:'black';
     font-size: 30px;
     margin-right: 2px;
     width: 100px;
@@ -103,7 +103,7 @@
   }
   .timer > div > span {
     text-transform: uppercase;
-    color: #999;
+    color: 'black';
     font-size: 20px;
     display: flex;
     align-items: center;
