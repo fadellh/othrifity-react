@@ -10,7 +10,8 @@ import PaymentAlert from './Pages/PaymentAlert'
 import Css from './Pages/Css'
 import { useSelector, useDispatch } from 'react-redux';
 import {getWaitingPayment, updatePaymentStatus} from './Redux/Action/TransactionAction'
-
+import RedirectComponent from './Pages/Redirect';
+import Empty from './Component/Empty'
  const App = () => {
 
   const userIdfromAuth = 1
@@ -28,7 +29,7 @@ import {getWaitingPayment, updatePaymentStatus} from './Redux/Action/Transaction
   // console.log(waitingPay[0],"INI DARI APP")
   if(waitingPay&&protect){
     let wait = waitingPay.forEach((val)=>{
-      const countdownTime = new Date(val.date).getTime() 
+      const countdownTime = new Date(val.update_date).getTime() 
       const countTime = countdownTime + 86400000
       const now = new Date().getTime()
       const distance = countTime - now
@@ -58,13 +59,10 @@ import {getWaitingPayment, updatePaymentStatus} from './Redux/Action/Transaction
           <Route path='/manage-user' component={ManageUser} />
           <Route path='/transaction' component={Transaction} />
           <Route path='/raja' component={RajaOngkir} />
-          {!protect
-          ?
-          <Route path='/thanks' component={PaymentAlert}/>
-          :
-          null
-          }
-          <Route path='/css' component={Css} />
+         
+          <Route path='/thanks' component={!protect?PaymentAlert:Empty}/>
+         
+          <Route path='/redirect' component={RedirectComponent} />
         </div>
         </div>
       </div>

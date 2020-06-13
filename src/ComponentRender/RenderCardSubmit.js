@@ -60,7 +60,7 @@ function RenderCardSubmit({data}) {
 
     }, [])
 
-    let handleSubmit = (id,index) => {
+    let handleSubmit = (id,index,reSubmit) => {
         // file image di image.imageFile
         let formData = new FormData();
         formData.append('image', image.imageFile);
@@ -69,7 +69,7 @@ function RenderCardSubmit({data}) {
             imageFile : undefined
         })
         dispatch(
-            addImage(id, formData)
+            addImage(id,reSubmit,formData)
         )
 
         setSubmit(update(submit,{
@@ -103,10 +103,15 @@ function RenderCardSubmit({data}) {
                         <Alert color="success">
                                 Terkirim!
                         </Alert>
+                        :val.note
+                            ?
+                            <Button className='form-control' color='primary' onClick={()=> handleSubmit(val.id,index,2)} >
+                                Re-Submit
+                            </Button>
                             :
-                        <Button className='form-control' color='primary' onClick={()=> handleSubmit(val.id,index)}>
-                               Submit
-                        </Button>
+                            <Button className='form-control' color='primary' onClick={()=> handleSubmit(val.id,index,0)}>
+                                Submit
+                            </Button>
                         }
                         <Button style={{marginTop:8}} className='form-control' color='danger' onClick={()=>setSelect(null)}>
                             {
@@ -120,23 +125,50 @@ function RenderCardSubmit({data}) {
             }
             return(
                 <Jumbotron >
-                        <div style={{marginTop:6}} >
-                            <i style={{color:'grey'}} >Pembayaran Anda dengan kode transaksi {val.id}</i> 
+                        {val.note
+                        ?
+                        <div>
+                            <div style={{marginTop:6}} >
+                                <i style={{color:'grey'}} >Pembayaran Anda dengan kode transaksi {val.id}</i> 
+                            </div>
+                            <div style={{marginTop:6}} >
+                                <i style={{color:'grey'}} >berakhir pada {new Date(new Date(val.update_date).getTime()+86400000).toLocaleString('en-US')}</i>
+                            </div>
+                            <div style={{marginTop:6,color:'grey'}} >Jumlah yang harus dibayar <b style={{color:'orange'}}>Rp {(val.grand_total).toLocaleString()}</b></div>
+                            <div style={{marginTop:6,color:'grey'}} ><b>Silahkan upload ulang bukti pembayaran Anda</b></div>
+                            <div style={{marginTop:6,color:'grey'}} >Karena bukti pembayaran {val.note}</div>
+                            <Button style={{marginTop:15}} color='success' onClick={()=>setSelect(val.id)} >Upload Ulang Bukti Pembayaran</Button>
                         </div>
-                        <div style={{marginTop:6}} >
-                            <i style={{color:'grey'}} >berakhir pada {new Date(new Date(val.date).getTime()+86400000).toLocaleString('en-US')}</i>
+                        :
+                        <div>
+                            <div style={{marginTop:6}} >
+                                <i style={{color:'grey'}} >Pembayaran Anda dengan kode transaksi {val.id}</i> 
+                            </div>
+                            <div style={{marginTop:6}} >
+                                <i style={{color:'grey'}} >berakhir pada {new Date(new Date(val.update_date).getTime()+86400000).toLocaleString('en-US')}</i>
+                            </div>
+                            <div style={{marginTop:6,color:'grey'}} >Jumlah yang harus dibayar <b style={{color:'orange'}}>Rp {(val.grand_total).toLocaleString()}</b></div>
+                            <div style={{marginTop:6,color:'grey'}} >Silahkan upload bukti pembayaran Anda</div>
+                            <Button style={{marginTop:15}} color='success' onClick={()=>setSelect(val.id)} >Upload Bukti Pembayaran</Button>
                         </div>
-                        <div style={{marginTop:6,color:'grey'}} >Jumlah yang harus dibayar <b style={{color:'orange'}}>Rp {(val.grand_total).toLocaleString()}</b></div>
-                        <div style={{marginTop:6,color:'grey'}} >Silahkan upload bukti pembayaran Anda</div>
-                        <Button style={{marginTop:15}} color='success' onClick={()=>setSelect(val.id)} >Upload Bukti Pembayaran</Button>
+                        }
                 </Jumbotron>
             )
         })
     }
-
+    console.log(data,"ini data")
     return (
         <div>
-            {renderCardSubmit()}
+            {data?
+            <div>
+                {renderCardSubmit()}
+            </div>
+            :
+            <div>
+                <img alt="thanks" src={require('../Asset/Ilustration/thanks.png')} style={{marginBottom:10}} ></img>
+                <p>Belum Ada Transaksi</p>
+            </div>
+            }
         </div>
     )
 }

@@ -72,14 +72,14 @@ function Transaction() {
             if(select === val.productId && selectIndex === index){
                 return(
                     <div className='row'>
-                    <div className='col-6'>
+                    <div className='col-7'>
                         <div className='row'>
-                            <div className='col-6'style={{backgroundColor:'skyblue'}} >
-                                <div style={{backgroundColor:'white',height:'200',width:'60'}}>
-                                  {val.nama_product}  </div>
-                                    {val.image_product}
+                            <div className='col-7'style={{backgroundColor:'skyblue'}} >
+                                <div style={{backgroundColor:'white',height:'200',width:'60'}}>{val.nama_product}  </div>
+                                <img src={require('../Asset/Image/defaultImage.jpg')} height={'85%'} width={'100%'} ></img>
+                                {val.image_product}
                             </div><hr></hr>
-                            <div className='col-6'>
+                            <div className='col-5'>
                                 <div className=''><h5>{index+1}{val.username}</h5></div>
                                 <div style={{color: 'grey'}}>{val.city_name}</div>
                                 <div><strong>{val.nama_product}</strong></div>
@@ -99,7 +99,7 @@ function Transaction() {
                             </div>
                         </div>
                     </div>
-                    <div className='col-6'>
+                    <div className='col-5'>
                         <div className='m-3'>   
                             <div>Pilih Durasi Pengiriman</div>
                             <ButtonDropdown isOpen={dropdownOpen} toggle={toggle} onClick={()=> setSelect(val.productId) }>
@@ -130,14 +130,14 @@ function Transaction() {
         }
         return(
             <div className='row'>
-            <div className='col-6'>
+            <div className='col-7'>
                 <div className='row'>
-                    <div className='col-6'style={{backgroundColor:'skyblue'}} >
-                        <div style={{backgroundColor:'white',height:'200',width:'60'}}>
-                          {val.nama_product}  </div>
-                            {val.image_product}
+                    <div className='col-7'style={{backgroundColor:'skyblue',marginBottom:7}} >
+                        <div style={{backgroundColor:'white',height:'200',width:'60'}}>{val.nama_product}  </div>
+                        <img src={require('../Asset/Image/defaultImage.jpg')} height={'85%'} width={'100%'} ></img>
+                        {val.image_product}
                     </div><hr></hr>
-                    <div className='col-6'>
+                    <div className='col-5'>
                         <div className=''><h5>{index+1}{val.username}</h5></div>
                         <div style={{color: 'grey'}}>{val.city_name}</div>
                         <div><strong>{val.nama_product}</strong></div>
@@ -157,7 +157,7 @@ function Transaction() {
                     </div>
                 </div>
             </div>
-            <div className='col-6'>
+            <div className='col-5'>
                 <div className='m-3'>   
                     <div>Pilih Durasi Pengiriman</div>
                     <ButtonDropdown toggle={()=> handelSelect(val.productId, index)} >

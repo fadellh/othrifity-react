@@ -62,7 +62,7 @@ export const addPayment = (shopDate,totalTagihan,donasi,totalOngkir,serviceFee,t
     }
 }
 
-export const addImage = (id,formData) => {
+export const addImage = (id,reSubmit,formData) => {
     return async dispatch => {
         dispatch({
             type:API_TRANSACTION_START
@@ -74,7 +74,7 @@ export const addImage = (id,formData) => {
                     'Content-Type' :  'multipart/form-data'
                 }
             }
-            let res = await Axios.post(`${API_URL}/transaction/add-image/${id}`,formData,headers)
+            let res = await Axios.post(`${API_URL}/transaction/add-image/${id}?reSubmit=${reSubmit}`,formData,headers)
             dispatch({
                 type: API_ADD_IMG_SUCCESS,
             }) 
@@ -92,7 +92,7 @@ export const getWaitingPayment = (userId) => {
             type:API_TRANSACTION_START
         })
         try{
-            let res = await Axios.get(`${API_URL}/transaction/add-wait-pay/${userId}`)
+            let res = await Axios.get(`${API_URL}/transaction/get-wait-pay/${userId}`)
             console.log(res.data)
             dispatch({
                 type: API_FETCH_WAITING,

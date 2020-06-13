@@ -7,14 +7,23 @@ import RenderCardSubmit from '../ComponentRender/RenderCardSubmit';
 function PaymentAlert() {
 
     const dispatch = useDispatch()
-    
+    const [sort,setSort] = useState([])
+    const [protect,setProtect] = useState(true)
     const {waitingPay} = useSelector(state=>state.dataTrans)
+    
+    if(waitingPay&&protect){
+        waitingPay.forEach((val)=>{
+           setSort(sort=>[...sort, new Date(val.update_date).getTime()])
+        })
+        setProtect(false)
+    }
+    sort.sort((a, b) => a - b)
+    console.log(sort.sort((a, b) => a - b))
      
-    const startDate = waitingPay[0].date
+    const startDate = sort[0]
     const [timerHours, setTimerHours] = useState('00')
     const [timerMinutes, setTimerMinutes] = useState('00')
     const [timerSeconds, setTimerSeconds] = useState('00')
-    const [date, setDate] = useState('')
     let interval = useRef()
     
     console.log(startDate,"INI CONSTANT")
@@ -77,7 +86,10 @@ function PaymentAlert() {
                         {timerSeconds}
                         <span> Detik:</span>
                     </div>
-                </div>
+                    </div>
+                    <div>
+                        <p className="display-5 d-flex justify-content-center" style={{color:'grey'}} >Terdapat {waitingPay.length} transaksi yang perlu di selesaikan </p>
+                    </div>
                 {/* {dateTime} */}
                 </Container>
             </Jumbotron>
